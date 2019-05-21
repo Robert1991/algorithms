@@ -22,6 +22,13 @@ class Tour:
                 self.__cost += self.g.distance(self.g.vertices[i], self.g.vertices[j])
         return self.__cost
     
+    def augmentedCost(self, _lambda, penalties):
+        augmentedCost = 0
+        for i, j in zip([0] + self.vertices, self.vertices + [0]):
+            currentDistance = self.g.distance(self.g.vertices[i], self.g.vertices[j])
+            augmentedCost += currentDistance + _lambda * penalties[i][j]
+        return augmentedCost
+
     def stochasticTwoOpt(self):
         c1 = random.randint(0, len(self.vertices))
         exclude = [c1]
