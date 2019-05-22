@@ -22,6 +22,14 @@ class Tour:
                 self.__cost += self.g.distance(self.g.vertices[i], self.g.vertices[j])
         return self.__cost
     
+    def utilities(self, penalties):
+        
+        utilities = []
+        for i, j in zip([0] + self.vertices, self.vertices + [0]):
+            utilities.append(self.g.distance(self.g.vertices[i], self.g.vertices[j]) / (1 + penalties[i][j])) 
+
+        return utilities
+    
     def augmentedCost(self, _lambda, penalties):
         augmentedCost = 0
         for i, j in zip([0] + self.vertices, self.vertices + [0]):
@@ -48,7 +56,6 @@ class Tour:
         return Tour(self.g,  self.vertices[:c1] + alteredSequence + self.vertices[c2:])
     
     def performDoubleBridgeMove(self):
-        altered = []
         pos1 = 1 + random.randint(0, len(self.vertices)/4)
         pos2 = pos1 + 1 + random.randint(0, len(self.vertices)/4)
         pos3 = pos2 + 1 + random.randint(0, len(self.vertices)/4)
