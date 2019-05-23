@@ -19,9 +19,16 @@ class Tour:
         if self.__cost is None:
             self.__cost = 0
             for i, j in zip([0] + self.vertices, self.vertices + [0]):
+                #print(str(i) + " " + str(j))
                 self.__cost += self.g.distance(self.g.vertices[i], self.g.vertices[j])
         return self.__cost
     
+    def costsOfPath(self):
+        pathCost = []
+        for i, j in zip([0] + self.vertices, self.vertices + [0]):
+            pathCost.append(self.g.distance(self.g.vertices[i], self.g.vertices[j])) 
+        return pathCost
+
     def utilities(self, penalties):
         
         utilities = []
@@ -94,6 +101,9 @@ class Graph:
 
     def randomTour(self):
         return Tour(self)
+    
+    def shuffleTour(self):
+        return Tour(self, random.shuffle(self.vertices))
 
     def plot(self, tour=None):
         """Plots the cities and superimposes given tour"""
