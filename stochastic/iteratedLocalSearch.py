@@ -1,3 +1,6 @@
+import sys
+sys.path.append("..")
+
 from graph import Graph
 
 def localSearch(currentBestTour, maximumNumberOfNoImprovements):
