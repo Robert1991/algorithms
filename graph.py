@@ -30,7 +30,6 @@ class Tour:
         return pathCost
 
     def utilities(self, penalties):
-        
         utilities = []
         for i, j in zip([0] + self.vertices, self.vertices + [0]):
             utilities.append(self.g.distance(self.g.vertices[i], self.g.vertices[j]) / (1 + penalties[i][j])) 
