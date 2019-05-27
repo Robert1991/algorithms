@@ -1,4 +1,5 @@
 import random
+import sys
 
 class Terminal:
     terminalValue = None
@@ -35,6 +36,7 @@ class Function:
         return Function(self.operator, self.arg1, self.arg2)
 
 class Program:
+    _fitness = None
     function = None
 
     @staticmethod
@@ -45,6 +47,18 @@ class Program:
 
         return Program(Function(functions[random.randint(0, len(functions)-1)], Program.random(maxDepth, functions, terms, valueBounds, depth, program), Program.random(maxDepth, functions, terms, valueBounds, depth, program)))
 
+    @staticmethod
+    def prune(program, maxDepth, terms, currentDepth=0):
+        if currentDepth == maxDepth -1:
+            return Program(Terminal.fromTerms(terms, [-5,5]))
+        else:
+            currentDepth += 1
+            if isinstance(program.function, Terminal):
+                return program
+            else:
+                prunedArg1Prog = Program.prune(program.function.arg1, maxDepth, terms, currentDepth)
+                prunedArg2Prog = Program.prune(program.function.arg2, maxDepth, terms, currentDepth)
+                return Program(Function(program.function.operator, prunedArg1Prog, prunedArg2Prog))
 
     def __init__(self, function):
         self.function = function
@@ -52,10 +66,27 @@ class Program:
     def copy(self):
         return Program(self.function.copy())
 
-    def subProgramAt(self, nodeIndex, lastProgram=None, currentIndex=0):
+    def replaceAt(self, nodeIndex, replacement, lastProgram=None, currentIndex=0):
         lastProgram = self if not lastProgram else lastProgram
         if nodeIndex == currentIndex:
-            return lastProgram, currentIndex
+            currentIndex += 1
+            return Program(replacement.function), currentIndex
+        else:
+            currentIndex += 1
+            if isinstance(lastProgram.function, Terminal):
+                return lastProgram, currentIndex
+            else:
+                arg1Node, currentIndex = self.replaceAt(nodeIndex, replacement, lastProgram=lastProgram.function.arg1, currentIndex=currentIndex)
+                arg2Node, currentIndex = self.replaceAt(nodeIndex, replacement, lastProgram=lastProgram.function.arg2, currentIndex=currentIndex)
+
+                return lastProgram, currentIndex
+            
+
+    def subProgramAt(self, nodeIndex, lastProgram=None, currentIndex=0):
+        lastProgram = self if not lastProgram else lastProgram
+        
+        if nodeIndex == currentIndex:
+            return lastProgram.copy(), currentIndex
         else:
             currentIndex += 1
             if isinstance(lastProgram.function, Terminal):
@@ -87,10 +118,11 @@ class Program:
     def fitness(self, targetFunction, trails=20):
         cumulatedError = 0.0
         for trail in range(trails):
-            inputVal = random.uniform(-1, 1)
+            inputVal = random.uniform(-5, 5)
             result = self._evalProgramm(inputVal)
             cumulatedError += abs(result - targetFunction(inputVal))
-        return cumulatedError / trails
+        self._fitness = cumulatedError / trails
+        return self._fitness
 
     def printOut(self, program=None):
         if not program:
@@ -123,73 +155,3 @@ class Program:
             return arg1 * arg2
         else:
             return arg1 / arg2
-
-class Population:
-    @staticmethod
-    def createRandomWith(populationSize, targetFunction):
-        return Population([Program.random(maxDepth, functions, terms, [-5,5]) for i in range(populationSize)], targetFunction)
-    
-    def __init__(self, population, targetFunction):
-        self.population = population
-        self.targetFunction = targetFunction
-        self.populationSize = len(population)
-
-    def parentFromTournamentSelection(self, tournamentSelectionSize):
-        selectedForTournament = [self.population[random.randint(0, self.populationSize-1)] for i in range(tournamentSelectionSize)]
-        self.sort(selectedForTournament)
-        [print(program.fitness(self.targetFunction)) for program in selectedForTournament]
-        return selectedForTournament[0]
-
-    def sort(self, population=None):
-        population = self.population if not population else population
-        population.sort(key=lambda citizen: citizen.fitness(targetFunction))
-    
-    def best(self):
-        self.sort()
-        return self.population[0]
-
-def crossover(parent1, parent2):
-    randomNodeIndexParent1 = random.randint(0, parent1.nodeCount()-2)
-    randomNodeIndexParent2 = random.randint(0, parent2.nodeCount()-2)
-
-
-
-def targetFunction(input):
-    return input ** 2 + input + 1
-
-
-functions = ["+","-","*","/"]
-terms = ["X", "R"]
-
-maxGenerations = 100
-maxDepth = 3
-populationSize = 100
-tournamentSelectionSize = 5
-pReproduction = 0.08
-pCrossover = 0.9
-pMutation = 0.02
-
-population = Population.createRandomWith(populationSize, targetFunction)
-population.sort()
-
-for count in range(1):
-    children = []    
-    
-    while len(children) < populationSize:
-        randomOperation = random.random()
-
-        parent1 = population.parentFromTournamentSelection(tournamentSelectionSize)
-
-        if randomOperation < pReproduction:
-            child = parent1.copy()
-        elif randomOperation < pReproduction + pCrossover:
-            parent2 = population.parentFromTournamentSelection(tournamentSelectionSize)
-            print(parent2.printOut())
-            print(parent2.nodeCount())
-            for i in range(parent2.nodeCount()):
-                print(parent2.subProgramAt(i)[0].printOut())    
-        break
-
-
-    
-    
