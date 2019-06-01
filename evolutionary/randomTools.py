@@ -12,3 +12,9 @@ def randomGaussian(mean=0.0, stdDev=1.0):
             break
     w = math.sqrt((-2 * math.log(w)) / w)
     return mean + upper * w * stdDev
+
+def randomVectorIn(bounds):
+    randomVector = []
+    for vectorBound in bounds:
+        randomVector.append(vectorBound[0] + ((vectorBound[1] - vectorBound[0]) * random.random()))
+    return randomVector
