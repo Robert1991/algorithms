@@ -18,3 +18,6 @@ def randomVectorIn(bounds):
     for vectorBound in bounds:
         randomVector.append(vectorBound[0] + ((vectorBound[1] - vectorBound[0]) * random.random()))
     return randomVector
+
+def randomBitString(numberOfBits):
+    return [1 if random.random() > 0.5 else 0 for num in range(numberOfBits)]
