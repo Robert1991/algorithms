@@ -141,7 +141,7 @@ class GeneExpressionProgramming:
         self.headLength = headLength
         self.tailLength = tailLength
     
-    def findFunctionFor(self, objectiveFunction, bounds, pCrossover=0.85, maxGenerations=150):
+    def findFunctionFor(self, objectiveFunction, bounds, pCrossover=0.85, maxGenerations=50):
         currentBest = self.population.bestPerformingCitizen(objectiveFunction, bounds)
         for generation in range(maxGenerations):
             selectedForReproduction = self.population.parentsFromBinaryTournament(objectiveFunction, bounds)
@@ -203,10 +203,6 @@ headLength = 20
 # 2 comes from the nodes of an operation, such as x * x -> 2
 tailLength = headLength * (2 - 1) + 1
 
-#genome = Genome.random(grammer, headLength, tailLength)
-#tree = genome._mapGenomeToFunctionTree_()
-#print(genome._functionTreeToString_(tree))
-#print(genome.fitness(objectiveFunction, bounds))
-
-geneExpProgramming = GeneExpressionProgramming(Population.randomPopulation(80, grammer, headLength, tailLength), grammer, headLength, tailLength)
+geneExpProgramming = GeneExpressionProgramming(Population.randomPopulation(80, grammer, headLength, tailLength),
+            grammer, headLength, tailLength)
 geneExpProgramming.findFunctionFor(objectiveFunction, bounds)

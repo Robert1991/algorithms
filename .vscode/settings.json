@@ -1,10 +1,10 @@
 {
     "python.pythonPath": "C:\\ProgramData\\Anaconda3\\python.exe",
     "python.testing.unittestEnabled": "True",
-    "python.testing.pyTestArgs": [
+    "python.testing.pytestArgs": [
         "evolutionary"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,
-    "python.testing.pyTestEnabled": true
+    "python.testing.pytestEnabled": true
 }

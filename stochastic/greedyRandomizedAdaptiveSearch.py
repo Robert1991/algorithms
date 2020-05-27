@@ -38,8 +38,6 @@ def createGreedyRandomizedSolution(currentTour, alpha):
     	
         for cost in range(len(costs)):
             if (costs[cost] <= minimumCost + alpha * (maximumCost - minimumCost)):
-                if candidates[cost] == 52:
-                    print("hello")
                 restrictedCanditateList.append(candidates[cost])
         candidate.append(restrictedCanditateList[rand.randint(0, len(restrictedCanditateList)-1)])
     return Tour(currentTour.g, candidate)

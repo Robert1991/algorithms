@@ -306,7 +306,7 @@ classifierSystem.train(10000, targetFunction)
 
 maxTrails = 100
 correct = 0
-for i in range( maxTrails):
+for i in range(maxTrails):
     randInput = randomTools.randomBitString(6)
     predicted = classifierSystem.predictActionFor(randInput)
     if predicted == targetFunction(randInput):
